@@ -12,22 +12,26 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 
+# Load environment variables from .env file, overriding existing ones
 load_dotenv('.env', override=True)
 
 def select_pdf_from_directory():
+    # Get list of all files in current directory
     all_files = os.listdir('.')
-
+    
+    # Iterate through files to find the first PDF
     for file in all_files:
         if file.lower().endswith('.pdf'):
             return file
         else:
             continue
     
+    # Exit if no PDF files found
     print("No PDF files found in the current directory.")
     exit()
 
-def extract_form_data(pdf_path):
-    """Extract form fields from PDF."""
+def extract_form_data(pdf_path):   
+    """Extracts form field data from PDF file and counts embedded documents."""
     doc = fitz.open(pdf_path)
     attachment_count = doc.embfile_count()
     form_data = {}
@@ -42,17 +46,20 @@ def extract_form_data(pdf_path):
     return doc, form_data, attachment_count
 
 def extract_embedded_documents(doc):
-    """Extract and OCR embedded documents from PDF."""
+    """Extracts and performs OCR on embedded PDF documents within the main PDF."""
     reader = easyocr.Reader(['en'])
     all_doc = ""
     
+    # Process each embedded document
     for i in range(doc.embfile_count()):
         try:
+            # Get embedded document metadata and content
             name = doc.embfile_info(i)['filename']
             data = doc.embfile_get(i)  # bytes
             emb_doc = fitz.open(stream=data, filetype="pdf")
             single_doc = ""
             
+            # Process each page of the embedded document
             for page in emb_doc:
                 pix = page.get_pixmap(dpi=300)
                 img_array = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)
@@ -71,7 +78,7 @@ def extract_embedded_documents(doc):
     return all_doc
 
 def structure_form_data(form_data):
-    """Structure the extracted form data into a readable format."""
+    """Structure the extracted form data into a json format."""
     data = {
         "cin": form_data.get('data[0].FormADT1_Dtls[0].Page1[0].Subform1[0].CIN_C[0]', ''),
         "gln": form_data.get('data[0].FormADT1_Dtls[0].Page1[0].Subform1[0].GLN_C[0]', ''),
