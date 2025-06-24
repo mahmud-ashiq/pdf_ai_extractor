@@ -1,0 +1,6 @@
+PyMuPDF==1.23.26
+easyocr==1.7.0
+langchain-google-genai==1.0.10
+langchain==0.1.0
+numpy==1.24.3
+python-dotenv==1.0.0
