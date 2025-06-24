@@ -34,13 +34,13 @@ pip install -r requirements.txt
 - For Windows:
 
 ```bash
-cp .env.example .env
+copy .env.template .env
 ```
 
 - For Linux/MacOS:
 
 ```bash
-copy .env.example .env
+cp .env.template .env
 ```
 
 #### 4. Set up your Google Gemini API key:
@@ -76,4 +76,4 @@ The script will automatically:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/mahmud-ashiq/pdf_ai_extractor/blob/main/LICENSE) for details.
